@@ -1,0 +1,22 @@
+# Auxiliares de LaTeX (se regeneran al compilar notebook.tex)
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Binarios
+*.exe
+*.o
+a.out
+
+# Archivos del stress test
+in.txt
+out1.txt
+out2.txt
+
+# Editores
+.vscode/
+*.swp
