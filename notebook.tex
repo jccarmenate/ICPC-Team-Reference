@@ -1,0 +1,279 @@
+% Team Reference ICPC. Compilar dos veces: pdflatex notebook.tex
+\documentclass[8pt,a4paper,landscape]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,landscape,left=8mm,right=8mm,top=13mm,bottom=8mm,
+            headsep=3mm]{geometry}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+
+% ---- Cambiar aqui los datos del equipo ----
+\newcommand{\equipo}{Nombre del equipo}
+\newcommand{\universidad}{Universidad}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\equipo} --- \universidad}
+\fancyhead[C]{\small Team Reference ICPC}
+\fancyhead[R]{\small P\'agina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{11pt}
+
+\setlength{\columnsep}{5mm}
+\setlength{\columnseprule}{0.2pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\contentsname}{\'Indice}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}[\vspace{-0.4ex}\hrule]
+\titlespacing*{\section}{0pt}{1.2ex}{0.9ex}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{0.9ex}{0.1ex}
+\titleformat{\paragraph}[runin]{\bfseries}{}{0pt}{}[.]
+\titlespacing*{\paragraph}{0pt}{0.8ex}{0.5em}
+
+% ---- Colores del codigo (estilo editor claro) ----
+\definecolor{colClave}{RGB}{0,0,190}        % palabras clave
+\definecolor{colTipo}{RGB}{0,120,130}       % tipos y contenedores STL
+\definecolor{colComentario}{RGB}{0,125,0}   % comentarios
+\definecolor{colTexto}{RGB}{170,30,30}      % strings y caracteres
+\definecolor{colDirectiva}{RGB}{130,0,140}  % #include, #define
+\definecolor{colFondo}{RGB}{245,245,245}    % fondo del bloque
+
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\fontsize{8.5pt}{9.8pt}\selectfont,
+  columns=fixed,
+  basewidth=0.5em,
+  keepspaces=true,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+  keywordstyle=\color{colClave}\bfseries,
+  keywordstyle={[2]\color{colTipo}},
+  morekeywords={[2]{vector,string,pair,array,queue,priority_queue,
+    set,map,unordered_map,complex,function,greater,less,
+    mt19937,mt19937_64,uniform_int_distribution,__int128,
+    SegTree,SCC,Pt,PtD,Circulo,Consulta}},
+  commentstyle=\color{colComentario}\itshape,
+  stringstyle=\color{colTexto},
+  directivestyle=\color{colDirectiva},
+  backgroundcolor=\color{colFondo},
+  % Sin marco: con frame=single la columna se corta justo despues
+  % del borde superior y el titulo queda separado de su codigo.
+  xleftmargin=3pt,
+  xrightmargin=3pt,
+  aboveskip=3pt,
+  belowskip=3pt
+}
+% listings invita a cortar la columna justo antes de cada bloque,
+% lo que deja titulos huerfanos; este parche lo prohibe.
+\makeatletter
+\patchcmd{\lst@Init}{\par\penalty-50\relax}{\par\nobreak}{}
+  {\PackageWarning{notebook}{No se pudo parchear listings}}
+\makeatother
+\newcommand{\codigo}[2]{\subsection{#1}\lstinputlisting{codigo/#2}}
+\setlist{nosep,leftmargin=1.2em}
+
+\begin{document}
+\begin{multicols*}{2}
+
+{\LARGE\bfseries Team Reference ICPC}\par
+{\large \equipo{} --- \universidad}\par
+\vspace{1ex}
+
+\textbf{Convenciones.} Todo el c\'odigo es C++17 y asume
+\texttt{\#include <bits/stdc++.h>} y \texttt{using namespace std;}
+(ver la plantilla). No se usan macros: cada bloque se copia tal cual.
+Los \'indices empiezan en 0. Cuando un bloque dice \emph{Requiere},
+hay que copiar tambi\'en ese otro bloque. Cada algoritmo fue probado
+contra una soluci\'on de fuerza bruta con casos aleatorios
+(carpeta \texttt{tests}).
+
+\tableofcontents
+
+\section{Plantilla y utilidades}
+\codigo{Plantilla}{varios/plantilla.cpp}
+\codigo{N\'umeros aleatorios}{varios/aleatorio.cpp}
+\subsection{Stress test (bash)}
+\lstinputlisting[language=bash]{codigo/varios/stress.sh}
+
+\section{Estructuras de datos}
+\codigo{Segment Tree 4N con lazy}{estructuras/segtree_lazy.cpp}
+\codigo{Segment Tree 2N iterativo}{estructuras/segtree_2n.cpp}
+\codigo{Fenwick Tree}{estructuras/fenwick.cpp}
+\codigo{Sparse Table}{estructuras/sparse_table.cpp}
+\codigo{Union-Find (DSU)}{estructuras/dsu.cpp}
+\codigo{Sqrt Decomposition}{estructuras/sqrt_decomp.cpp}
+\codigo{Algoritmo de Mo}{estructuras/mo.cpp}
+\codigo{Heavy-Light Decomposition (y LCA)}{estructuras/hld.cpp}
+\codigo{Centroid Decomposition}{estructuras/centroid.cpp}
+\codigo{Ordered Set (pb\_ds)}{estructuras/ordered_set.cpp}
+\codigo{Li Chao Tree}{estructuras/lichao.cpp}
+
+\section{Grafos}
+\codigo{Dijkstra}{grafos/dijkstra.cpp}
+\codigo{Biconexas, puentes, articulaci\'on, bridge tree}{grafos/biconexas.cpp}
+\codigo{SCC y grafo reducido}{grafos/scc.cpp}
+\codigo{2-SAT}{grafos/twosat.cpp}
+\codigo{Flujo m\'aximo (Dinic)}{grafos/dinic.cpp}
+\codigo{Flujo m\'aximo de costo m\'inimo}{grafos/mincost.cpp}
+\codigo{H\'ungaro (asignaci\'on de peso m\'in/m\'ax)}{grafos/hungaro.cpp}
+\codigo{Matching bipartito (Hopcroft-Karp)}{grafos/hopcroft_karp.cpp}
+
+\section{Matem\'atica}
+\codigo{Aritm\'etica modular}{matematica/aritmetica.cpp}
+\codigo{Miller-Rabin}{matematica/miller_rabin.cpp}
+\codigo{Pollard Rho}{matematica/pollard_rho.cpp}
+\codigo{Euclides extendido, inverso, diof\'antica}{matematica/euclides.cpp}
+\codigo{Teorema chino del resto}{matematica/crt.cpp}
+\codigo{Baby Step / Giant Step}{matematica/bsgs.cpp}
+\codigo{Criba lineal}{matematica/criba.cpp}
+\codigo{Gauss (reales y m\'odulo primo)}{matematica/gauss.cpp}
+\codigo{FFT}{matematica/fft.cpp}
+\codigo{NTT}{matematica/ntt.cpp}
+\codigo{Matrices}{matematica/matriz.cpp}
+\codigo{Combinatoria}{matematica/combinatoria.cpp}
+
+\section{Strings}
+\codigo{Hashing}{strings/hashing.cpp}
+\codigo{KMP}{strings/kmp.cpp}
+\codigo{Funci\'on Z}{strings/z.cpp}
+\codigo{Manacher}{strings/manacher.cpp}
+\codigo{Suffix Automaton (DP en el DAG)}{strings/suffix_automaton.cpp}
+\codigo{Suffix Array y LCP}{strings/suffix_array.cpp}
+\codigo{Aho-Corasick}{strings/aho_corasick.cpp}
+
+\section{Geometr\'ia}
+\codigo{Punto y primitivas}{geometria/punto.cpp}
+\codigo{Intersecci\'on de segmentos}{geometria/segmentos.cpp}
+\codigo{Convex Hull}{geometria/convex_hull.cpp}
+\codigo{Puntos antipodales (rotating calipers)}{geometria/antipodal.cpp}
+\codigo{C\'irculo m\'inimo}{geometria/circulo_minimo.cpp}
+\codigo{Punto en pol\'igono}{geometria/punto_en_poligono.cpp}
+\codigo{Par de puntos m\'as cercano}{geometria/par_mas_cercano.cpp}
+
+\section{F\'ormulas y recordatorios}
+
+\paragraph{L\'imites}
+\texttt{int} $\approx 2.1\cdot10^9$, \texttt{long long}
+$\approx 9.2\cdot10^{18}$, \texttt{\_\_int128} $\approx 1.7\cdot10^{38}$,
+\texttt{double} 15--16 d\'igitos. Unas $10^8$ operaciones simples por
+segundo. Gu\'ia por tama\~no: $n\le 10$: $O(n!)$; $n\le 20$: $O(2^n n)$;
+$n\le 500$: $O(n^3)$; $n\le 5000$: $O(n^2)$; $n\le 10^6$:
+$O(n\log n)$; m\'as: $O(n)$.
+
+\paragraph{Primos \'utiles}
+$10^9+7$, $10^9+9$, $998244353 = 119\cdot2^{23}+1$, $2^{61}-1$.
+M\'aximo de divisores: 240 para $n\le10^6$, 1344 para $n\le10^9$,
+103680 para $n\le10^{18}$.
+
+\paragraph{Sumas}
+$\sum_{i=1}^n i = \frac{n(n+1)}{2}$,\;
+$\sum i^2 = \frac{n(n+1)(2n+1)}{6}$,\;
+$\sum i^3 = \left(\frac{n(n+1)}{2}\right)^2$,\;
+$\sum_{i=0}^n r^i = \frac{r^{n+1}-1}{r-1}$,\;
+$\sum_{i=1}^n \frac1i \approx \ln n + 0.577$
+(por eso $\sum_i n/i = O(n\log n)$).
+
+\paragraph{Combinatoria}
+\begin{itemize}
+\item $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$;\;
+  $\sum_k \binom{n}{k} = 2^n$.
+\item Soluciones de $x_1+\dots+x_k = n$ con $x_i \ge 0$:
+  $\binom{n+k-1}{k-1}$.
+\item Catalan: $C_n = \frac{1}{n+1}\binom{2n}{n}$:
+  1, 1, 2, 5, 14, 42, 132, 429.
+\item Desarreglos: $D_n = (n-1)(D_{n-1}+D_{n-2})$, $D_0=1$, $D_1=0$.
+\item Lucas ($p$ primo): $\binom{n}{k} \equiv \prod \binom{n_i}{k_i}
+  \pmod p$ con $n_i, k_i$ los d\'igitos en base $p$.
+\item Burnside: \#\'orbitas $= \frac{1}{|G|}\sum_{g\in G}
+  |\mathrm{Fix}(g)|$.
+\item Inclusi\'on-exclusi\'on: $|\bigcup A_i| = \sum_{S\neq\emptyset}
+  (-1)^{|S|+1} |\bigcap_{i\in S} A_i|$.
+\end{itemize}
+
+\paragraph{Teor\'ia de n\'umeros}
+\begin{itemize}
+\item Fermat: $a^{p-1}\equiv 1 \pmod p$. Euler: $a^{\varphi(m)}\equiv 1
+  \pmod m$ si $\gcd(a,m)=1$.
+\item $\varphi(n) = n\prod_{p\mid n}(1-\frac1p)$;\;
+  $\sum_{d\mid n}\varphi(d) = n$.
+\item Wilson: $(p-1)! \equiv -1 \pmod p$.
+\item $a x + b y = c$ tiene soluci\'on entera si y solo si
+  $\gcd(a,b) \mid c$.
+\item $\mathrm{lcm}(a,b) = a / \gcd(a,b) \cdot b$.
+\end{itemize}
+
+\paragraph{Grafos}
+\begin{itemize}
+\item Flujo m\'aximo $=$ corte m\'inimo.
+\item K\H{o}nig (bipartito): cobertura m\'inima de v\'ertices $=$
+  matching m\'aximo; independiente m\'aximo $= V -$ matching.
+\item Cubrimiento m\'inimo por caminos disjuntos en un DAG
+  $= V -$ matching (grafo bipartito salida/entrada).
+\item Dilworth: anticadena m\'axima $=$ m\'inimo n\'umero de cadenas
+  que cubren el orden parcial.
+\item Hall: hay matching perfecto del lado $A$ si y solo si
+  $|N(S)| \ge |S|$ para todo $S \subseteq A$.
+\item Euleriano, no dirigido: conexo y todos los grados pares
+  (circuito) o exactamente dos impares (camino). Dirigido: grado de
+  entrada $=$ grado de salida.
+\item Euler (planar conexo): $V - E + F = 2$.
+\item Cayley: $n^{n-2}$ \'arboles etiquetados. Kirchhoff: \#\'arboles
+  generadores $=$ cualquier cofactor del laplaciano.
+\item 2-SAT: $(a \lor b) \equiv (\lnot a \to b) \land (\lnot b \to a)$.
+\end{itemize}
+
+\paragraph{Strings}
+\begin{itemize}
+\item Per\'iodo m\'inimo de $s$: $n - \pi[n-1]$ (es per\'iodo exacto
+  si divide a $n$).
+\item Substrings distintos: $\frac{n(n+1)}{2} - \sum \mathrm{lcp}$, o
+  $\sum_v \mathrm{len}(v) - \mathrm{len}(\mathrm{link}(v))$ en el
+  suffix automaton.
+\end{itemize}
+
+\paragraph{Geometr\'ia}
+\begin{itemize}
+\item \'Area de pol\'igono: $\frac12\left|\sum x_i y_{i+1} -
+  x_{i+1} y_i\right|$.
+\item Pick: $A = I + \frac{B}{2} - 1$; puntos enteros en un segmento:
+  $\gcd(|dx|,|dy|) + 1$.
+\item Distancia de $p$ a la recta $ab$:
+  $\frac{|(b-a)\times(p-a)|}{|b-a|}$.
+\item Her\'on: $A = \sqrt{s(s-a)(s-b)(s-c)}$, $s = \frac{a+b+c}{2}$.
+  Circunradio $R = \frac{abc}{4A}$, inradio $r = \frac{A}{s}$.
+\item Cosenos: $c^2 = a^2+b^2-2ab\cos C$. Senos:
+  $\frac{a}{\sin A} = 2R$.
+\item Rotar $\theta$: $(x\cos\theta - y\sin\theta,\;
+  x\sin\theta + y\cos\theta)$.
+\end{itemize}
+
+\paragraph{Antes de enviar}
+\begin{itemize}
+\item ?`Desborda \texttt{int}? Usar \texttt{long long} en productos y
+  sumas.
+\item Casos borde: $n = 1$, vac\'io, todos iguales, grafo no conexo.
+\item Reiniciar variables globales entre casos de prueba.
+\item M\'odulo de negativos: \texttt{((x \% m) + m) \% m}.
+\item Recursi\'on profunda ($n \ge 10^5$ en cadena): cuidado con la
+  pila.
+\item Usar \texttt{'\textbackslash n'} en vez de \texttt{endl}.
+\item Comparar reales con tolerancia (\texttt{1e-9}); preferir
+  enteros en geometr\'ia.
+\end{itemize}
+
+\paragraph{Referencias para ampliar}
+KACTL (KTH), Biblioteca de la UFMG, El Vasito (UNC), notebook de
+Stanford, cp-algorithms.com.
+
+\end{multicols*}
+\end{document}
