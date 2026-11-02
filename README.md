@@ -2,7 +2,7 @@
 
 Notebook de equipo para competencias estilo ICPC, en C++17 y **sin macros**:
 cada bloque se copia tal cual. Incluye el PDF listo para imprimir
-([notebook.pdf](notebook.pdf), 21 páginas a 2 columnas con el código
+([notebook.pdf](notebook.pdf), 22 páginas a 2 columnas con el código
 coloreado) y un test aleatorio contra fuerza bruta para cada algoritmo.
 
 ## Contenido
@@ -10,8 +10,8 @@ coloreado) y un test aleatorio contra fuerza bruta para cada algoritmo.
 | Sección | Algoritmos |
 |---|---|
 | Utilidades | Plantilla, números aleatorios, stress test, búsqueda binaria (`lower_bound` y `upper_bound` explicados, búsqueda sobre la respuesta y bisección en reales) |
-| Estructuras de datos | Segment Tree 4N con lazy, Segment Tree 2N iterativo, Segment Tree recursivo con funciones globales (update puntual y lazy), Fenwick, Sparse Table, DSU, Sqrt Decomposition, Mo, Heavy-Light Decomposition (con LCA), Centroid Decomposition, ordered set, Li Chao Tree |
-| Grafos | Dijkstra, componentes biconexas + puentes + puntos de articulación + bridge tree, SCC + grafo reducido, 2-SAT, Dinic, flujo máximo de costo mínimo, Húngaro, Hopcroft-Karp |
+| Estructuras de datos | Segment Tree 4N con lazy, Segment Tree 2N iterativo, Segment Tree recursivo con funciones globales (update puntual y lazy), Merge Sort Tree (k-ésimo menor en rango), Fenwick, Sparse Table, DSU, Sqrt Decomposition, Mo, Heavy-Light Decomposition (con LCA), Centroid Decomposition, ordered set, Li Chao Tree |
+| Grafos | Dijkstra, camino y circuito euleriano (Hierholzer), componentes biconexas + puentes + puntos de articulación + bridge tree, SCC + grafo reducido, 2-SAT, Dinic, flujo máximo de costo mínimo, Húngaro, Hopcroft-Karp |
 | Matemática | Aritmética modular, Miller-Rabin, Pollard Rho, Euclides extendido (inverso modular, diofántica), teorema chino del resto, Baby Step / Giant Step, criba lineal, Gauss (reales y módulo primo), FFT, NTT, matrices, combinatoria |
 | Strings | Hashing, KMP, función Z, Manacher, Suffix Automaton (con DP en el DAG), Suffix Array + LCP, Aho-Corasick |
 | Geometría | Punto y primitivas, intersección de segmentos, Convex Hull, puntos antipodales (rotating calipers), círculo mínimo, punto en polígono, par de puntos más cercano |
