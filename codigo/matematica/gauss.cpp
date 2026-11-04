@@ -2,32 +2,37 @@
 // a = matriz aumentada de n filas y m + 1 columnas (A | b).
 // Retorna 0 (sin solucion), 1 (unica) o 2 (infinitas).
 // ans = una solucion (variables libres en 0).
+// Cada fila se escala por su mayor valor absoluto: asi EPS es
+// relativo y funciona igual con coeficientes chicos o grandes.
 int gauss(vector<vector<double>> a, vector<double>& ans) {
   const double EPS = 1e-9;
-  int n = a.size(), m = a[0].size() - 1;
+  int n = a.size(), m = a[0].size() - 1, rank = 0;
+  for (auto& r : a) {
+    double mx = 0;
+    for (double v : r) mx = max(mx, fabs(v));
+    if (mx > 0)
+      for (double& v : r) v /= mx;
+  }
   vector<int> where(m, -1);
-  for (int col = 0, row = 0; col < m && row < n; col++) {
-    int piv = row;
-    for (int i = row; i < n; i++)
+  for (int col = 0; col < m && rank < n; col++) {
+    int piv = rank;
+    for (int i = rank; i < n; i++)
       if (fabs(a[i][col]) > fabs(a[piv][col])) piv = i;
     if (fabs(a[piv][col]) < EPS) continue;
-    swap(a[piv], a[row]);
-    where[col] = row;
+    swap(a[piv], a[rank]);
+    where[col] = rank;
     for (int i = 0; i < n; i++) {
-      if (i == row) continue;
-      double c = a[i][col] / a[row][col];
-      for (int j = col; j <= m; j++) a[i][j] -= a[row][j] * c;
+      if (i == rank) continue;
+      double c = a[i][col] / a[rank][col];
+      for (int j = col; j <= m; j++) a[i][j] -= a[rank][j] * c;
     }
-    row++;
+    rank++;
   }
   ans.assign(m, 0);
   for (int j = 0; j < m; j++)
     if (where[j] != -1) ans[j] = a[where[j]][m] / a[where[j]][j];
-  for (int i = 0; i < n; i++) {
-    double s = 0;
-    for (int j = 0; j < m; j++) s += ans[j] * a[i][j];
-    if (fabs(s - a[i][m]) > EPS) return 0;
-  }
+  for (int i = rank; i < n; i++)  // filas sin pivote: quedan 0 = b
+    if (fabs(a[i][m]) > EPS) return 0;
   for (int j = 0; j < m; j++)
     if (where[j] == -1) return 2;
   return 1;

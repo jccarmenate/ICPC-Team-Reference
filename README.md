@@ -64,6 +64,19 @@ Compila cada test y compara los algoritmos contra una solución de fuerza
 bruta con casos aleatorios. Si todo está bien imprime una línea `OK` por
 sección.
 
+### Comparación contra KACTL
+
+```bash
+bash tests/kactl/run.sh
+```
+
+Clona [KACTL](https://github.com/kth-competitive-programming/kactl) en una
+carpeta temporal y corre cada bloque del notebook junto a su equivalente
+de KACTL con las mismas entradas aleatorias: los resultados tienen que ser
+idénticos. También compara tiempos con tamaños de competencia (marca
+`LENTO` si el notebook tarda más del triple) y prueba la profundidad de
+recursión con una pila de 8 MB. KACTL no se guarda en este repo.
+
 ## Limitaciones conocidas
 
 - Suffix Automaton y Aho-Corasick asumen letras `'a'..'z'`.
@@ -71,8 +84,11 @@ sección.
   ~1e14; más allá hay que usar la NTT.
 - La intersección de segmentos es la prueba entre dos segmentos; no incluye
   el barrido para detectar cruces entre n segmentos.
-- Las funciones recursivas (HLD, centroid, Tarjan) pueden agotar la pila en
-  cadenas muy largas si el juez tiene la pila limitada.
+- Los DFS son recursivos, igual que en KACTL. Con una pila de 8 MB, en una
+  cadena de n vértices se caen HLD y biconexas desde n = 1e5, SCC desde
+  2e5 y centroid desde 5e5. Con la pila igual a la memoria (lo habitual en
+  los jueces) no hay problema; si el juez la limita, hay que pasarlos a
+  iterativos.
 
 ## Referencias
 

@@ -187,6 +187,25 @@ void t_bsgs() {
 }
 
 void t_gauss() {
+  // coeficientes grandes: antes respondia "sin solucion" porque
+  // verificaba el residuo contra un EPS absoluto
+  for (int it = 0; it < 50; it++) {
+    int n = rnd(20, 120);
+    vector<vector<double>> a(n, vector<double>(n + 1));
+    vector<double> sol(n), ans;
+    for (auto& v : sol) v = rnd(-1000, 1000);
+    for (int i = 0; i < n; i++) {
+      double s = 0;
+      for (int j = 0; j < n; j++) { a[i][j] = rnd(-1000000, 1000000); s += a[i][j] * sol[j]; }
+      a[i][n] = s;
+    }
+    CHECK(gauss(a, ans) == 1);
+    for (int j = 0; j < n; j++) CHECK(fabs(ans[j] - sol[j]) < 1e-6);
+    a[n - 1] = a[0];  // fila repetida: infinitas soluciones
+    CHECK(gauss(a, ans) == 2);
+    a[n - 1][n] += fabs(a[0][n]) + 1;  // misma fila con otro b: ninguna
+    CHECK(gauss(a, ans) == 0);
+  }
   const long long P = 1000000007;
   for (int it = 0; it < 20000; it++) {
     int n = rnd(1, 4), m = rnd(1, 4);
