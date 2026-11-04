@@ -5,37 +5,37 @@
 struct HopcroftKarp {
   int n, m;
   vector<vector<int>> adj;
-  vector<int> par_izq, par_der, dist;
+  vector<int> match_left, match_right, dist;
   HopcroftKarp(int n_, int m_) : n(n_), m(m_), adj(n_),
-      par_izq(n_, -1), par_der(m_, -1), dist(n_) {}
+      match_left(n_, -1), match_right(m_, -1), dist(n_) {}
   void add_edge(int u, int v) { adj[u].push_back(v); }
   bool bfs() {
     queue<int> q;
-    bool hay_camino = false;
+    bool found_path = false;
     for (int u = 0; u < n; u++) {
-      dist[u] = par_izq[u] == -1 ? 0 : -1;
+      dist[u] = match_left[u] == -1 ? 0 : -1;
       if (dist[u] == 0) q.push(u);
     }
     while (!q.empty()) {
       int u = q.front();
       q.pop();
       for (int v : adj[u]) {
-        int w = par_der[v];
-        if (w == -1) hay_camino = true;
+        int w = match_right[v];
+        if (w == -1) found_path = true;
         else if (dist[w] == -1) {
           dist[w] = dist[u] + 1;
           q.push(w);
         }
       }
     }
-    return hay_camino;
+    return found_path;
   }
   bool dfs(int u) {
     for (int v : adj[u]) {
-      int w = par_der[v];
+      int w = match_right[v];
       if (w == -1 || (dist[w] == dist[u] + 1 && dfs(w))) {
-        par_izq[u] = v;
-        par_der[v] = u;
+        match_left[u] = v;
+        match_right[v] = u;
         return true;
       }
     }
@@ -46,7 +46,7 @@ struct HopcroftKarp {
     int res = 0;
     while (bfs())
       for (int u = 0; u < n; u++)
-        if (par_izq[u] == -1 && dfs(u)) res++;
+        if (match_left[u] == -1 && dfs(u)) res++;
     return res;
   }
 };

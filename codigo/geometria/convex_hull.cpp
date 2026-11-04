@@ -7,7 +7,7 @@ vector<Pt> convex_hull(vector<Pt> p) {
   p.erase(unique(p.begin(), p.end()), p.end());
   if (p.size() < 3) return p;
   vector<Pt> h;
-  for (int pasada = 0; pasada < 2; pasada++) {
+  for (int pass = 0; pass < 2; pass++) {
     int base = h.size();
     for (Pt q : p) {
       while ((int)h.size() >= base + 2 &&

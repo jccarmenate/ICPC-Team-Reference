@@ -3,10 +3,10 @@
 struct SparseTable {
   vector<vector<int>> t;
   SparseTable(const vector<int>& a) {
-    int n = a.size(), niveles = 1;
-    while ((1 << niveles) <= n) niveles++;
-    t.assign(niveles, a);
-    for (int k = 1; k < niveles; k++)
+    int n = a.size(), levels = 1;
+    while ((1 << levels) <= n) levels++;
+    t.assign(levels, a);
+    for (int k = 1; k < levels; k++)
       for (int i = 0; i + (1 << k) <= n; i++)
         t[k][i] = min(t[k - 1][i], t[k - 1][i + (1 << (k - 1))]);
   }

@@ -1,40 +1,40 @@
 // Flujo maximo de costo minimo (caminos de aumento con SPFA).
 // O(F * V * E) en el peor caso; suficiente en la practica.
 // Admite costos negativos mientras no haya ciclos negativos.
-// flujo(s, t, limite) retorna (flujo enviado, costo total).
+// flow(s, t, limit) retorna (flujo enviado, costo total).
 struct MinCostFlow {
-  struct Arista { int to; long long cap, costo; };
+  struct Edge { int to; long long cap, cost; };
   int n;
-  vector<Arista> e;
+  vector<Edge> e;
   vector<vector<int>> adj;
   vector<long long> dist;
-  vector<int> previa;
-  vector<bool> en_cola;
-  MinCostFlow(int n_) : n(n_), adj(n_), dist(n_), previa(n_),
-                        en_cola(n_) {}
-  void add_edge(int u, int v, long long cap, long long costo) {
+  vector<int> prev_edge;
+  vector<bool> in_queue;
+  MinCostFlow(int n_) : n(n_), adj(n_), dist(n_), prev_edge(n_),
+                        in_queue(n_) {}
+  void add_edge(int u, int v, long long cap, long long cost) {
     adj[u].push_back(e.size());
-    e.push_back({v, cap, costo});
+    e.push_back({v, cap, cost});
     adj[v].push_back(e.size());
-    e.push_back({u, 0, -costo});
+    e.push_back({u, 0, -cost});
   }
   bool spfa(int s, int t) {
     fill(dist.begin(), dist.end(), LLONG_MAX);
-    fill(en_cola.begin(), en_cola.end(), false);
+    fill(in_queue.begin(), in_queue.end(), false);
     queue<int> q;
     dist[s] = 0;
     q.push(s);
     while (!q.empty()) {
       int u = q.front();
       q.pop();
-      en_cola[u] = false;
+      in_queue[u] = false;
       for (int id : adj[u]) {
         int v = e[id].to;
-        if (e[id].cap > 0 && dist[u] + e[id].costo < dist[v]) {
-          dist[v] = dist[u] + e[id].costo;
-          previa[v] = id;
-          if (!en_cola[v]) {
-            en_cola[v] = true;
+        if (e[id].cap > 0 && dist[u] + e[id].cost < dist[v]) {
+          dist[v] = dist[u] + e[id].cost;
+          prev_edge[v] = id;
+          if (!in_queue[v]) {
+            in_queue[v] = true;
             q.push(v);
           }
         }
@@ -42,19 +42,19 @@ struct MinCostFlow {
     }
     return dist[t] != LLONG_MAX;
   }
-  pair<long long, long long> flujo(int s, int t,
-                                   long long limite = LLONG_MAX) {
+  pair<long long, long long> flow(int s, int t,
+                                   long long limit = LLONG_MAX) {
     long long f = 0, c = 0;
-    while (f < limite && spfa(s, t)) {
-      long long aum = limite - f;
-      for (int v = t; v != s; v = e[previa[v] ^ 1].to)
-        aum = min(aum, e[previa[v]].cap);
-      for (int v = t; v != s; v = e[previa[v] ^ 1].to) {
-        e[previa[v]].cap -= aum;
-        e[previa[v] ^ 1].cap += aum;
+    while (f < limit && spfa(s, t)) {
+      long long aug = limit - f;
+      for (int v = t; v != s; v = e[prev_edge[v] ^ 1].to)
+        aug = min(aug, e[prev_edge[v]].cap);
+      for (int v = t; v != s; v = e[prev_edge[v] ^ 1].to) {
+        e[prev_edge[v]].cap -= aug;
+        e[prev_edge[v] ^ 1].cap += aug;
       }
-      f += aum;
-      c += aum * dist[t];
+      f += aug;
+      c += aug * dist[t];
     }
     return {f, c};
   }

@@ -16,15 +16,15 @@ struct PtD { double x, y; };
 
 // > 0: c a la izquierda de a->b.  < 0: derecha.  0: colineales.
 long long orient(Pt a, Pt b, Pt c) { return (b - a).cross(c - a); }
-int signo(long long v) { return (v > 0) - (v < 0); }
+int sign(long long v) { return (v > 0) - (v < 0); }
 // p esta sobre el segmento cerrado ab?
-bool en_segmento(Pt a, Pt b, Pt p) {
+bool on_segment(Pt a, Pt b, Pt p) {
   return orient(a, b, p) == 0 && (a - p).dot(b - p) <= 0;
 }
 // Doble del area con signo (positiva si es antihorario).
-long long area2(const vector<Pt>& pol) {
+long long area2(const vector<Pt>& poly) {
   long long s = 0;
-  int n = pol.size();
-  for (int i = 0; i < n; i++) s += pol[i].cross(pol[(i + 1) % n]);
+  int n = poly.size();
+  for (int i = 0; i < n; i++) s += poly[i].cross(poly[(i + 1) % n]);
   return s;
 }

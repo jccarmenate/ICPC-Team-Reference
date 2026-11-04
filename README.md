@@ -31,6 +31,8 @@ notebook.pdf   PDF generado
 ## Convenciones
 
 - Todo el código asume `#include <bits/stdc++.h>` y `using namespace std;`.
+- Los identificadores (estructuras, funciones y variables) están en inglés;
+  los comentarios, en español.
 - Índices desde 0. No hay macros ni `typedef` compartidos.
 - Si el comentario inicial de un bloque dice *Requiere*, hay que copiar
   también ese otro bloque (por ejemplo, HLD requiere el Segment Tree lazy).

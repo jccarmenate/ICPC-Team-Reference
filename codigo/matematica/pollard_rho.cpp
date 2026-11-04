@@ -1,7 +1,7 @@
 // Pollard Rho: factorizacion de n < 2^63 en ~O(n^(1/4)).
-// Requiere mulmod y es_primo (Miller-Rabin).
+// Requiere mulmod y is_prime (Miller-Rabin).
 // rho(n): un factor no trivial de n (n compuesto).
-// factorizar(n): factores primos con repeticion, ordenados.
+// factorize(n): factores primos con repeticion, ordenados.
 long long rho(long long n) {
   if (n % 2 == 0) return 2;
   static mt19937_64 gen(20260101);
@@ -22,16 +22,16 @@ long long rho(long long n) {
     }
   }
 }
-void factorizar_rec(long long n, vector<long long>& fs) {
+void factorize_rec(long long n, vector<long long>& fs) {
   if (n == 1) return;
-  if (es_primo(n)) { fs.push_back(n); return; }
+  if (is_prime(n)) { fs.push_back(n); return; }
   long long d = rho(n);
-  factorizar_rec(d, fs);
-  factorizar_rec(n / d, fs);
+  factorize_rec(d, fs);
+  factorize_rec(n / d, fs);
 }
-vector<long long> factorizar(long long n) {
+vector<long long> factorize(long long n) {
   vector<long long> fs;
-  factorizar_rec(n, fs);
+  factorize_rec(n, fs);
   sort(fs.begin(), fs.end());
   return fs;
 }

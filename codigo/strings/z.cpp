@@ -1,8 +1,8 @@
 // Funcion Z. O(n). z[i] = largo del mayor prefijo comun entre s
 // y s[i..]. Por convencion z[0] = n.
-// Buscar pat en texto: calcular Z de pat + "#" + texto y mirar
+// Buscar pat en text: calcular Z de pat + "#" + text y mirar
 // las posiciones con z[i] == largo de pat.
-vector<int> funcion_z(const string& s) {
+vector<int> z_function(const string& s) {
   int n = s.size();
   vector<int> z(n, 0);
   if (n > 0) z[0] = n;

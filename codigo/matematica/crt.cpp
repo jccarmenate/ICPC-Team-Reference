@@ -9,8 +9,8 @@ pair<long long, long long> crt(long long a1, long long m1,
   long long g = extgcd(m1, m2, p, q);
   if ((a2 - a1) % g != 0) return {-1, -1};
   long long l = m1 / g * m2, mg = m2 / g;
-  __int128 dif = (a2 - a1) / g % mg;
-  long long k = (long long)(dif * p % mg);
+  __int128 diff = (a2 - a1) / g % mg;
+  long long k = (long long)(diff * p % mg);
   long long x = (long long)((a1 + (__int128)k * m1) % l);
   return {(x + l) % l, l};
 }

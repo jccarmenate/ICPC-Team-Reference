@@ -5,23 +5,23 @@
 // de largo (len[link[v]], len[v]] con el mismo conjunto de
 // posiciones finales.
 struct SuffixAutomaton {
-  struct Estado {
+  struct State {
     int len = 0, link = -1;
-    long long cnt = 0;  // apariciones (tras calcular_ocurrencias)
+    long long cnt = 0;  // apariciones (tras compute_occurrences)
     array<int, 26> next;
-    Estado() { next.fill(-1); }
+    State() { next.fill(-1); }
   };
-  vector<Estado> st;
-  int ultimo = 0;
+  vector<State> st;
+  int last = 0;
   SuffixAutomaton(const string& s = "") : st(1) {
-    for (char c : s) extender(c);
+    for (char c : s) extend(c);
   }
-  void extender(char ch) {
+  void extend(char ch) {
     int c = ch - 'a', cur = st.size();
     st.emplace_back();
-    st[cur].len = st[ultimo].len + 1;
+    st[cur].len = st[last].len + 1;
     st[cur].cnt = 1;
-    int p = ultimo;
+    int p = last;
     while (p != -1 && st[p].next[c] == -1) {
       st[p].next[c] = cur;
       p = st[p].link;
@@ -33,36 +33,36 @@ struct SuffixAutomaton {
       if (st[p].len + 1 == st[q].len) {
         st[cur].link = q;
       } else {
-        int clon = st.size();
-        Estado copia = st[q];
-        copia.len = st[p].len + 1;
-        copia.cnt = 0;
-        st.push_back(copia);
+        int clone = st.size();
+        State cloned = st[q];
+        cloned.len = st[p].len + 1;
+        cloned.cnt = 0;
+        st.push_back(cloned);
         while (p != -1 && st[p].next[c] == q) {
-          st[p].next[c] = clon;
+          st[p].next[c] = clone;
           p = st[p].link;
         }
-        st[q].link = clon;
-        st[cur].link = clon;
+        st[q].link = clone;
+        st[cur].link = clone;
       }
     }
-    ultimo = cur;
+    last = cur;
   }
   // Estados por len creciente = orden topologico del DAG.
-  vector<int> por_len() {
-    vector<int> orden(st.size());
-    iota(orden.begin(), orden.end(), 0);
-    sort(orden.begin(), orden.end(),
+  vector<int> by_len() {
+    vector<int> order(st.size());
+    iota(order.begin(), order.end(), 0);
+    sort(order.begin(), order.end(),
          [&](int a, int b) { return st[a].len < st[b].len; });
-    return orden;
+    return order;
   }
   // Deja en cnt[v] cuantas veces aparecen los substrings de v.
-  void calcular_ocurrencias() {
-    vector<int> orden = por_len();
-    for (int i = (int)orden.size() - 1; i > 0; i--)
-      st[st[orden[i]].link].cnt += st[orden[i]].cnt;
+  void compute_occurrences() {
+    vector<int> order = by_len();
+    for (int i = (int)order.size() - 1; i > 0; i--)
+      st[st[order[i]].link].cnt += st[order[i]].cnt;
   }
-  long long ocurrencias(const string& t) {
+  long long occurrences(const string& t) {
     int v = 0;
     for (char ch : t) {
       v = st[v].next[ch - 'a'];
@@ -71,25 +71,25 @@ struct SuffixAutomaton {
     return st[v].cnt;
   }
   // Cantidad de substrings distintos (no vacios).
-  long long distintos() {
+  long long distinct() {
     long long r = 0;
     for (int v = 1; v < (int)st.size(); v++)
       r += st[v].len - st[st[v].link].len;
     return r;
   }
   // DP en el DAG: dp[v] = caminos que salen de v (incluye vacio).
-  vector<long long> caminos() {
-    vector<int> orden = por_len();
+  vector<long long> paths() {
+    vector<int> order = by_len();
     vector<long long> dp(st.size(), 1);
-    for (int i = (int)orden.size() - 1; i >= 0; i--)
-      for (int u : st[orden[i]].next)
-        if (u != -1) dp[orden[i]] += dp[u];
+    for (int i = (int)order.size() - 1; i >= 0; i--)
+      for (int u : st[order[i]].next)
+        if (u != -1) dp[order[i]] += dp[u];
     return dp;
   }
   // k-esimo substring distinto en orden lexicografico (k >= 1).
   // Retorna "" si hay menos de k.
-  string kesimo(long long k) {
-    vector<long long> dp = caminos();
+  string kth(long long k) {
+    vector<long long> dp = paths();
     if (k > dp[0] - 1) return "";
     string res;
     int v = 0;
@@ -109,7 +109,7 @@ struct SuffixAutomaton {
   }
   // Largo del substring comun mas largo con t. O(|t|).
   int lcs(const string& t) {
-    int v = 0, l = 0, mejor = 0;
+    int v = 0, l = 0, best = 0;
     for (char ch : t) {
       int c = ch - 'a';
       while (v != 0 && st[v].next[c] == -1) {
@@ -120,8 +120,8 @@ struct SuffixAutomaton {
         v = st[v].next[c];
         l++;
       }
-      mejor = max(mejor, l);
+      best = max(best, l);
     }
-    return mejor;
+    return best;
   }
 };

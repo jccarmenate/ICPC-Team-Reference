@@ -19,7 +19,7 @@ long long inv_mod(long long a, long long m) {
 // Ecuacion diofantica a x + b y = c. Retorna false si no hay
 // solucion. Si hay, (x0, y0) es una y todas las demas son
 //   x = x0 + k * (b / g),  y = y0 - k * (a / g),  k entero.
-bool diofantica(long long a, long long b, long long c,
+bool diophantine(long long a, long long b, long long c,
                 long long& x0, long long& y0, long long& g) {
   g = extgcd(llabs(a), llabs(b), x0, y0);
   if (g == 0) { x0 = y0 = 0; return c == 0; }

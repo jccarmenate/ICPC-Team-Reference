@@ -9,7 +9,7 @@ for t in busqueda estructuras segtree_recursivo merge_sort_tree grafos euler mat
       && ./test_$t.exe; then
     :
   else
-    echo "FALLO test_$t"
+    echo "FAIL test_$t"
     fallas=1
   fi
 done

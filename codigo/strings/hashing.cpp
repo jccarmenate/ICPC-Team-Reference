@@ -12,15 +12,15 @@ struct Hashing {
     static long long b = 256 + gen() % (MOD - 1000);
     return b;
   }
-  vector<long long> h, pot;
+  vector<long long> h, pw;
   Hashing(const string& s) : h(s.size() + 1, 0),
-                             pot(s.size() + 1, 1) {
+                             pw(s.size() + 1, 1) {
     for (int i = 0; i < (int)s.size(); i++) {
       h[i + 1] = (mul(h[i], base()) + (unsigned char)s[i]) % MOD;
-      pot[i + 1] = mul(pot[i], base());
+      pw[i + 1] = mul(pw[i], base());
     }
   }
   long long get(int l, int r) {  // [l, r)
-    return (h[r] - mul(h[l], pot[r - l]) + MOD) % MOD;
+    return (h[r] - mul(h[l], pw[r - l]) + MOD) % MOD;
   }
 };

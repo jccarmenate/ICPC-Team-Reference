@@ -14,7 +14,7 @@ vector<vector<long long>> mat_mult(
     }
   return c;
 }
-vector<vector<long long>> mat_pot(vector<vector<long long>> a,
+vector<vector<long long>> mat_pow(vector<vector<long long>> a,
                                   long long e, long long mod) {
   int k = a.size();
   vector<vector<long long>> r(k, vector<long long>(k, 0));

@@ -3,15 +3,15 @@
 // orden topologico: si hay arista c1 -> c2 en el DAG, c1 < c2.
 // O(n + m).
 struct SCC {
-  int n, reloj = 0, ncomp = 0;
+  int n, timer = 0, ncomp = 0;
   vector<vector<int>> adj;
-  vector<int> tin, low, comp, pila;
+  vector<int> tin, low, comp, stk;
   SCC(int n_) : n(n_), adj(n_), tin(n_, -1), low(n_, 0),
                 comp(n_, -1) {}
   void add_edge(int u, int v) { adj[u].push_back(v); }
   void dfs(int u) {
-    tin[u] = low[u] = reloj++;
-    pila.push_back(u);
+    tin[u] = low[u] = timer++;
+    stk.push_back(u);
     for (int v : adj[u]) {
       if (tin[v] == -1) {
         dfs(v);
@@ -22,8 +22,8 @@ struct SCC {
     }
     if (low[u] == tin[u]) {
       while (true) {
-        int v = pila.back();
-        pila.pop_back();
+        int v = stk.back();
+        stk.pop_back();
         comp[v] = ncomp;
         if (v == u) break;
       }
@@ -37,14 +37,14 @@ struct SCC {
     return ncomp;
   }
   // Grafo reducido (DAG de componentes), sin aristas repetidas.
-  vector<vector<int>> condensar() {
+  vector<vector<int>> condense() {
     vector<vector<int>> dag(ncomp);
     for (int u = 0; u < n; u++)
       for (int v : adj[u])
         if (comp[u] != comp[v]) dag[comp[u]].push_back(comp[v]);
-    for (auto& fila : dag) {
-      sort(fila.begin(), fila.end());
-      fila.erase(unique(fila.begin(), fila.end()), fila.end());
+    for (auto& row : dag) {
+      sort(row.begin(), row.end());
+      row.erase(unique(row.begin(), row.end()), row.end());
     }
     return dag;
   }

@@ -55,9 +55,9 @@ int upper_bound_manual(const vector<long long>& a, long long x) {
 // Retorna el MENOR m con ok(m), o hi + 1 si ninguno cumple.
 // lower_bound es el caso ok(i) = a[i] >= x; upper_bound, a[i] > x.
 // Para el MAYOR m con ok(m) cuando el patron es verdadero...falso:
-//   primer_verdadero(lo, hi, [&](long long m) { return !ok(m); }) - 1
+//   first_true(lo, hi, [&](long long m) { return !ok(m); }) - 1
 template <class F>
-long long primer_verdadero(long long lo, long long hi, F ok) {
+long long first_true(long long lo, long long hi, F ok) {
   hi++;  // hi pasa a significar "ninguno cumple"
   while (lo < hi) {
     long long mid = lo + (hi - lo) / 2;
@@ -71,7 +71,7 @@ long long primer_verdadero(long long lo, long long hi, F ok) {
 // Iterar un numero fijo de veces evita problemas con EPS:
 // 100 iteraciones achican el intervalo en un factor de 2^100.
 template <class F>
-double biseccion(double lo, double hi, F ok) {
+double bisection(double lo, double hi, F ok) {
   for (int it = 0; it < 100; it++) {
     double mid = (lo + hi) / 2;
     if (ok(mid)) hi = mid;

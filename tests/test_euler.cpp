@@ -2,21 +2,21 @@
 #include "../codigo/grafos/euler.cpp"
 
 // Fuerza bruta: existe un recorrido que usa todas las aristas?
-bool existe_bruto(int n, const vector<pair<int, int>>& es, bool dir) {
+bool exists_brute(int n, const vector<pair<int, int>>& es, bool dir) {
   int m = es.size();
   if (m == 0) return true;
-  vector<bool> usada(m, false);
-  function<bool(int, int)> rec = [&](int u, int usadas) {
-    if (usadas == m) return true;
+  vector<bool> used(m, false);
+  function<bool(int, int)> rec = [&](int u, int used_edges) {
+    if (used_edges == m) return true;
     for (int i = 0; i < m; i++) {
-      if (usada[i]) continue;
+      if (used[i]) continue;
       int v = -1;
       if (es[i].first == u) v = es[i].second;
       else if (!dir && es[i].second == u) v = es[i].first;
       if (v == -1) continue;
-      usada[i] = true;
-      bool ok = rec(v, usadas + 1);
-      usada[i] = false;
+      used[i] = true;
+      bool ok = rec(v, used_edges + 1);
+      used[i] = false;
       if (ok) return true;
     }
     return false;
@@ -37,26 +37,26 @@ int main() {
       es.push_back({u, v});
       e.add_edge(u, v);
     }
-    vector<int> c = e.camino();
-    CHECK(!c.empty() == existe_bruto(n, es, dir));
+    vector<int> c = e.path();
+    CHECK(!c.empty() == exists_brute(n, es, dir));
     if (c.empty()) continue;
     CHECK((int)c.size() == m + 1);
     // cada paso usa una arista distinta y se usan todas
-    multiset<pair<int, int>> libres(es.begin(), es.end());
+    multiset<pair<int, int>> remaining(es.begin(), es.end());
     for (int i = 0; i + 1 < (int)c.size(); i++) {
       int u = c[i], v = c[i + 1];
-      auto p = libres.find({u, v});
-      if (p == libres.end() && !dir) p = libres.find({v, u});
-      CHECK(p != libres.end());
-      libres.erase(p);
+      auto p = remaining.find({u, v});
+      if (p == remaining.end() && !dir) p = remaining.find({v, u});
+      CHECK(p != remaining.end());
+      remaining.erase(p);
     }
-    CHECK(libres.empty());
+    CHECK(remaining.empty());
   }
   // grande: ciclo dirigido de 200000 aristas
   int n = 200000;
   Euler e(n, true);
   for (int i = 0; i < n; i++) e.add_edge(i, (i + 1) % n);
-  vector<int> c = e.camino();
+  vector<int> c = e.path();
   CHECK((int)c.size() == n + 1 && c.front() == c.back());
   printf("OK euler\n");
 }

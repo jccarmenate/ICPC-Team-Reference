@@ -12,13 +12,13 @@
 #include "../codigo/estructuras/lichao.cpp"
 
 // Suma en rango + update en rango contra un arreglo plano.
-template <class Estructura>
-void probar_rango(int maxn) {
+template <class Structure>
+void test_range(int maxn) {
   for (int it = 0; it < 400; it++) {
     int n = rnd(1, maxn);
     vector<long long> a(n);
     for (auto& x : a) x = rnd(-100, 100);
-    Estructura st(a);
+    Structure st(a);
     for (int op = 0; op < 80; op++) {
       int l = rnd(0, n - 1), r = rnd(l, n - 1);
       if (rnd(0, 1)) {
@@ -61,25 +61,25 @@ void t_fenwick() {
     vector<long long> a(n, 0);
     Fenwick fw(n);
     for (int op = 0; op < 80; op++) {
-      int tipo = rnd(0, 2);
-      if (tipo == 0) {
+      int kind = rnd(0, 2);
+      if (kind == 0) {
         int p = rnd(0, n - 1);
         long long v = rnd(0, 20);
         a[p] += v;
         fw.add(p, v);
-      } else if (tipo == 1) {
+      } else if (kind == 1) {
         int l = rnd(0, n - 1), r = rnd(l, n - 1);
         long long s = 0;
         for (int i = l; i <= r; i++) s += a[i];
         CHECK(fw.sum(l, r) == s);
       } else {
         long long k = rnd(1, 300), s = 0;
-        int esperado = n;
+        int expected = n;
         for (int i = 0; i < n; i++) {
           s += a[i];
-          if (s >= k) { esperado = i; break; }
+          if (s >= k) { expected = i; break; }
         }
-        CHECK(fw.lower_bound(k) == esperado);
+        CHECK(fw.lower_bound(k) == expected);
       }
     }
   }
@@ -106,16 +106,16 @@ void t_dsu() {
     for (int op = 0; op < 40; op++) {
       int a = rnd(0, n - 1), b = rnd(0, n - 1);
       if (rnd(0, 1)) {
-        bool nuevo = id[a] != id[b];
-        CHECK(d.unir(a, b) == nuevo);
-        int viejo = id[b], destino = id[a];
-        for (int& x : id) if (x == viejo) x = destino;
+        bool merged = id[a] != id[b];
+        CHECK(d.unite(a, b) == merged);
+        int old_id = id[b], target = id[a];
+        for (int& x : id) if (x == old_id) x = target;
       } else {
         CHECK((d.find(a) == d.find(b)) == (id[a] == id[b]));
       }
       CHECK(d.comps == (int)set<int>(id.begin(), id.end()).size());
-      int cuenta = count(id.begin(), id.end(), id[a]);
-      CHECK(d.tam[d.find(a)] == cuenta);
+      int tally = count(id.begin(), id.end(), id[a]);
+      CHECK(d.sz[d.find(a)] == tally);
     }
   }
 }
@@ -125,7 +125,7 @@ void t_mo() {
     int n = rnd(1, 60), q = rnd(0, 80);
     vector<int> a(n);
     for (auto& x : a) x = rnd(0, 8);
-    vector<Consulta> qs;
+    vector<Query> qs;
     for (int i = 0; i < q; i++) {
       int l = rnd(0, n - 1), r = rnd(l, n - 1);
       qs.push_back({l, r, i});
@@ -141,8 +141,8 @@ void t_mo() {
 
 void t_hld() {
   for (int it = 0; it < 600; it++) {
-    int n = rnd(1, 40), raiz = rnd(0, n - 1);
-    auto es = arbol_aleatorio(n);
+    int n = rnd(1, 40), root = rnd(0, n - 1);
+    auto es = random_tree(n);
     HLD h(n);
     vector<vector<int>> adj(n);
     for (auto [u, v] : es) {
@@ -150,54 +150,54 @@ void t_hld() {
       adj[u].push_back(v);
       adj[v].push_back(u);
     }
-    h.build(raiz);
+    h.build(root);
     // fuerza bruta: padre y profundidad con BFS
-    vector<int> padre(n, -1), prof(n, 0), cola = {raiz};
-    for (int i = 0; i < (int)cola.size(); i++) {
-      int u = cola[i];
+    vector<int> parent(n, -1), depth(n, 0), bfs_order = {root};
+    for (int i = 0; i < (int)bfs_order.size(); i++) {
+      int u = bfs_order[i];
       for (int v : adj[u])
-        if (v != padre[u]) {
-          padre[v] = u;
-          prof[v] = prof[u] + 1;
-          cola.push_back(v);
+        if (v != parent[u]) {
+          parent[v] = u;
+          depth[v] = depth[u] + 1;
+          bfs_order.push_back(v);
         }
     }
-    auto camino = [&](int u, int v) {
+    auto path = [&](int u, int v) {
       vector<int> a, b;
       while (u != v) {
-        if (prof[u] >= prof[v]) { a.push_back(u); u = padre[u]; }
-        else { b.push_back(v); v = padre[v]; }
+        if (depth[u] >= depth[v]) { a.push_back(u); u = parent[u]; }
+        else { b.push_back(v); v = parent[v]; }
       }
       a.push_back(u);  // el LCA
       a.insert(a.end(), b.begin(), b.end());
       return make_pair(a, u);
     };
-    auto en_subarbol = [&](int raiz_sub, int x) {
-      while (x != -1 && x != raiz_sub) x = padre[x];
-      return x == raiz_sub;
+    auto in_subtree = [&](int sub_root, int x) {
+      while (x != -1 && x != sub_root) x = parent[x];
+      return x == sub_root;
     };
     vector<long long> val(n, 0);
     for (int op = 0; op < 60; op++) {
-      int u = rnd(0, n - 1), v = rnd(0, n - 1), tipo = rnd(0, 4);
+      int u = rnd(0, n - 1), v = rnd(0, n - 1), kind = rnd(0, 4);
       long long x = rnd(-50, 50);
-      auto [nodos, l] = camino(u, v);
-      if (tipo == 0) {
-        h.update_camino(u, v, x);
-        for (int w : nodos) val[w] += x;
-      } else if (tipo == 1) {
+      auto [nodes, l] = path(u, v);
+      if (kind == 0) {
+        h.update_path(u, v, x);
+        for (int w : nodes) val[w] += x;
+      } else if (kind == 1) {
         long long s = 0;
-        for (int w : nodos) s += val[w];
-        CHECK(h.query_camino(u, v) == s);
-      } else if (tipo == 2) {
-        h.update_subarbol(u, x);
-        for (int w = 0; w < n; w++) if (en_subarbol(u, w)) val[w] += x;
-      } else if (tipo == 3) {
+        for (int w : nodes) s += val[w];
+        CHECK(h.query_path(u, v) == s);
+      } else if (kind == 2) {
+        h.update_subtree(u, x);
+        for (int w = 0; w < n; w++) if (in_subtree(u, w)) val[w] += x;
+      } else if (kind == 3) {
         long long s = 0;
-        for (int w = 0; w < n; w++) if (en_subarbol(u, w)) s += val[w];
-        CHECK(h.query_subarbol(u) == s);
+        for (int w = 0; w < n; w++) if (in_subtree(u, w)) s += val[w];
+        CHECK(h.query_subtree(u) == s);
       } else {
         CHECK(h.lca(u, v) == l);
-        CHECK(h.dist(u, v) == (int)nodos.size() - 1);
+        CHECK(h.dist(u, v) == (int)nodes.size() - 1);
       }
     }
   }
@@ -206,7 +206,7 @@ void t_hld() {
 void t_centroid() {
   for (int it = 0; it < 600; it++) {
     int n = rnd(1, 50);
-    auto es = arbol_aleatorio(n);
+    auto es = random_tree(n);
     Centroid c(n);
     vector<vector<int>> adj(n);
     for (auto [u, v] : es) {
@@ -215,35 +215,35 @@ void t_centroid() {
       adj[v].push_back(u);
     }
     c.build();
-    int niveles = 0;
-    while ((1 << niveles) <= n) niveles++;
-    CHECK((int)c.dist.size() <= niveles);  // altura O(log n)
-    CHECK(count(c.padre.begin(), c.padre.end(), -1) == 1);
+    int levels = 0;
+    while ((1 << levels) <= n) levels++;
+    CHECK((int)c.dist.size() <= levels);  // altura O(log n)
+    CHECK(count(c.parent.begin(), c.parent.end(), -1) == 1);
     // distancias por BFS desde cada vertice
     vector<vector<int>> d(n, vector<int>(n, -1));
     for (int s = 0; s < n; s++) {
-      vector<int> cola = {s};
+      vector<int> bfs_order = {s};
       d[s][s] = 0;
-      for (int i = 0; i < (int)cola.size(); i++)
-        for (int v : adj[cola[i]])
+      for (int i = 0; i < (int)bfs_order.size(); i++)
+        for (int v : adj[bfs_order[i]])
           if (d[s][v] == -1) {
-            d[s][v] = d[s][cola[i]] + 1;
-            cola.push_back(v);
+            d[s][v] = d[s][bfs_order[i]] + 1;
+            bfs_order.push_back(v);
           }
     }
-    vector<bool> marcado(n, false);
+    vector<bool> marked(n, false);
     for (int op = 0; op < 40; op++) {
       int v = rnd(0, n - 1);
       if (rnd(0, 2) == 0) {
-        c.marcar(v);
-        marcado[v] = true;
+        c.mark(v);
+        marked[v] = true;
       } else {
-        int mejor = INT_MAX / 2;
+        int best = INT_MAX / 2;
         for (int w = 0; w < n; w++)
-          if (marcado[w]) mejor = min(mejor, d[v][w]);
-        int res = c.mas_cercano(v);
-        if (mejor == INT_MAX / 2) CHECK(res >= INT_MAX / 2);
-        else CHECK(res == mejor);
+          if (marked[w]) best = min(best, d[v][w]);
+        int res = c.closest(v);
+        if (best == INT_MAX / 2) CHECK(res >= INT_MAX / 2);
+        else CHECK(res == best);
       }
     }
   }
@@ -272,35 +272,35 @@ void t_lichao() {
   for (int it = 0; it < 500; it++) {
     long long lo = rnd(-60, 20), hi = rnd(lo, lo + 80);
     LiChao lc(lo, hi);
-    vector<pair<long long, long long>> rectas;
+    vector<pair<long long, long long>> lines;
     for (int op = 0; op < 50; op++) {
       if (rnd(0, 2) == 0) {
         long long m = rnd(-30, 30), b = rnd(-1000, 1000);
         lc.add(m, b);
-        rectas.push_back({m, b});
+        lines.push_back({m, b});
       } else {
-        long long x = rnd(lo, hi), mejor = LLONG_MAX;
-        for (auto [m, b] : rectas) mejor = min(mejor, m * x + b);
-        CHECK(lc.query(x) == mejor);
+        long long x = rnd(lo, hi), best = LLONG_MAX;
+        for (auto [m, b] : lines) best = min(best, m * x + b);
+        CHECK(lc.query(x) == best);
       }
     }
   }
   // coordenadas grandes
   LiChao lc(-1000000000LL, 1000000000LL);
-  vector<pair<long long, long long>> rectas;
+  vector<pair<long long, long long>> lines;
   for (int op = 0; op < 3000; op++) {
     long long m = rnd(-1000000, 1000000), b = rnd(-1000000000000LL, 1000000000000LL);
     lc.add(m, b);
-    rectas.push_back({m, b});
-    long long x = rnd(-1000000000LL, 1000000000LL), mejor = LLONG_MAX;
-    for (auto [mm, bb] : rectas) mejor = min(mejor, mm * x + bb);
-    CHECK(lc.query(x) == mejor);
+    lines.push_back({m, b});
+    long long x = rnd(-1000000000LL, 1000000000LL), best = LLONG_MAX;
+    for (auto [mm, bb] : lines) best = min(best, mm * x + bb);
+    CHECK(lc.query(x) == best);
   }
 }
 
 int main() {
-  probar_rango<SegTree>(40);
-  probar_rango<SqrtDecomp>(70);
+  test_range<SegTree>(40);
+  test_range<SqrtDecomp>(70);
   t_segtree_2n();
   t_fenwick();
   t_sparse();
@@ -310,5 +310,5 @@ int main() {
   t_centroid();
   t_ordered_set();
   t_lichao();
-  printf("OK estructuras\n");
+  printf("OK data_structures\n");
 }

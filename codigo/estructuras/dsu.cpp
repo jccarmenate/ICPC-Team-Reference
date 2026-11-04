@@ -1,21 +1,21 @@
 // Union-Find con compresion de caminos y union por tamano.
 // Casi O(1) amortizado por operacion.
 struct DSU {
-  vector<int> padre, tam;
+  vector<int> parent, sz;
   int comps;
-  DSU(int n) : padre(n), tam(n, 1), comps(n) {
-    iota(padre.begin(), padre.end(), 0);
+  DSU(int n) : parent(n), sz(n, 1), comps(n) {
+    iota(parent.begin(), parent.end(), 0);
   }
   int find(int x) {
-    return padre[x] == x ? x : padre[x] = find(padre[x]);
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
   }
-  bool unir(int a, int b) {
+  bool unite(int a, int b) {
     a = find(a);
     b = find(b);
     if (a == b) return false;
-    if (tam[a] < tam[b]) swap(a, b);
-    padre[b] = a;
-    tam[a] += tam[b];
+    if (sz[a] < sz[b]) swap(a, b);
+    parent[b] = a;
+    sz[a] += sz[b];
     comps--;
     return true;
   }

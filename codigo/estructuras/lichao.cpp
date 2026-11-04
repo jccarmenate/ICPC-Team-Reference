@@ -4,32 +4,32 @@
 // Para maximo: insertar (-m, -b) y negar la respuesta.
 // Cuidado: m * x + b debe caber en long long.
 struct LiChao {
-  struct Recta {
+  struct Line {
     long long m, b;
     long long eval(long long x) const { return m * x + b; }
   };
-  struct Nodo { Recta r; int izq, der; };
+  struct Node { Line r; int lc, rc; };
   long long lo, hi;
-  vector<Nodo> t;
+  vector<Node> t;
   LiChao(long long lo_, long long hi_) : lo(lo_), hi(hi_) {
-    nuevo();
+    new_node();
   }
-  int nuevo() {
+  int new_node() {
     t.push_back({{0, LLONG_MAX}, -1, -1});
     return (int)t.size() - 1;
   }
-  void add(Recta nueva, int v, long long l, long long r) {
+  void add(Line added, int v, long long l, long long r) {
     long long mid = l + (r - l) / 2;
-    bool gana_izq = nueva.eval(l) < t[v].r.eval(l);
-    bool gana_mid = nueva.eval(mid) < t[v].r.eval(mid);
-    if (gana_mid) swap(t[v].r, nueva);
-    if (l == r || nueva.b == LLONG_MAX) return;
-    if (gana_izq != gana_mid) {
-      if (t[v].izq == -1) { int id = nuevo(); t[v].izq = id; }
-      add(nueva, t[v].izq, l, mid);
+    bool wins_left = added.eval(l) < t[v].r.eval(l);
+    bool wins_mid = added.eval(mid) < t[v].r.eval(mid);
+    if (wins_mid) swap(t[v].r, added);
+    if (l == r || added.b == LLONG_MAX) return;
+    if (wins_left != wins_mid) {
+      if (t[v].lc == -1) { int id = new_node(); t[v].lc = id; }
+      add(added, t[v].lc, l, mid);
     } else {
-      if (t[v].der == -1) { int id = nuevo(); t[v].der = id; }
-      add(nueva, t[v].der, mid + 1, r);
+      if (t[v].rc == -1) { int id = new_node(); t[v].rc = id; }
+      add(added, t[v].rc, mid + 1, r);
     }
   }
   void add(long long m, long long b) { add({m, b}, 0, lo, hi); }
@@ -39,8 +39,8 @@ struct LiChao {
     while (v != -1) {
       res = min(res, t[v].r.eval(x));
       long long mid = l + (r - l) / 2;
-      if (x <= mid) { v = t[v].izq; r = mid; }
-      else { v = t[v].der; l = mid + 1; }
+      if (x <= mid) { v = t[v].lc; r = mid; }
+      else { v = t[v].rc; l = mid + 1; }
     }
     return res;
   }

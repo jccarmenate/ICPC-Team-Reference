@@ -12,19 +12,19 @@
 #include "../codigo/matematica/matriz.cpp"
 #include "../codigo/matematica/combinatoria.cpp"
 
-bool primo_bruto(long long n) {
+bool is_prime_brute(long long n) {
   if (n < 2) return false;
   for (long long d = 2; d * d <= n; d++)
     if (n % d == 0) return false;
   return true;
 }
-long long primo_aleatorio(long long lo, long long hi) {
+long long random_prime(long long lo, long long hi) {
   while (true) {
     long long p = rnd(lo, hi);
-    if (primo_bruto(p)) return p;
+    if (is_prime_brute(p)) return p;
   }
 }
-vector<long long> factores_brutos(long long n) {
+vector<long long> brute_factors(long long n) {
   vector<long long> f;
   for (long long d = 2; d * d <= n; d++)
     while (n % d == 0) {
@@ -35,7 +35,7 @@ vector<long long> factores_brutos(long long n) {
   return f;
 }
 
-void t_aritmetica() {
+void t_arithmetic() {
   for (int it = 0; it < 20000; it++) {
     long long m = rnd(1, 1000), b = rnd(0, 1000), e = rnd(0, 30), r = 1 % m;
     for (int i = 0; i < e; i++) r = r * (b % m) % m;
@@ -49,64 +49,64 @@ void t_aritmetica() {
   }
 }
 
-void t_primos() {
-  Criba cr(300000);
-  for (int i = 0; i <= 300000; i++) CHECK(es_primo(i) == cr.es_primo(i));
+void t_primes() {
+  Sieve cr(300000);
+  for (int i = 0; i <= 300000; i++) CHECK(is_prime(i) == cr.is_prime(i));
   for (int i = 2; i <= 3000; i++) {
-    CHECK(cr.es_primo(i) == primo_bruto(i));
+    CHECK(cr.is_prime(i) == is_prime_brute(i));
     vector<long long> f;
-    for (auto [p, e] : cr.factorizar(i))
+    for (auto [p, e] : cr.factorize(i))
       for (int j = 0; j < e; j++) f.push_back(p);
-    CHECK(f == factores_brutos(i));
+    CHECK(f == brute_factors(i));
   }
-  CHECK(es_primo((1LL << 61) - 1));
-  CHECK(es_primo(1000000007) && es_primo(998244353));
-  CHECK(!es_primo(3215031751LL));  // pseudoprimo fuerte en bases 2,3,5,7
+  CHECK(is_prime((1LL << 61) - 1));
+  CHECK(is_prime(1000000007) && is_prime(998244353));
+  CHECK(!is_prime(3215031751LL));  // pseudoprimo fuerte en bases 2,3,5,7
   CHECK(3825123056546413051LL % 149491 == 0);  // idem en bases 2..23
-  CHECK(!es_primo(3825123056546413051LL));
+  CHECK(!is_prime(3825123056546413051LL));
   for (long long c : {561LL, 1105LL, 1729LL, 2465LL, 6601LL, 8911LL})
-    CHECK(!es_primo(c));  // numeros de Carmichael
+    CHECK(!is_prime(c));  // numeros de Carmichael
   for (int it = 0; it < 300; it++) {
-    long long p = primo_aleatorio(900000000, 2000000000);
-    long long q = primo_aleatorio(900000000, 2000000000);
-    CHECK(es_primo(p) && es_primo(q) && !es_primo(p * q));
+    long long p = random_prime(900000000, 2000000000);
+    long long q = random_prime(900000000, 2000000000);
+    CHECK(is_prime(p) && is_prime(q) && !is_prime(p * q));
     long long x = rnd(1000000000000LL, 2000000000000LL);
-    CHECK(es_primo(x) == primo_bruto(x));
+    CHECK(is_prime(x) == is_prime_brute(x));
   }
 }
 
 void t_pollard() {
   for (long long n = 2; n <= 30000; n++)
-    CHECK(factorizar(n) == factores_brutos(n));
-  auto verificar = [&](long long n) {
-    vector<long long> f = factorizar(n);
+    CHECK(factorize(n) == brute_factors(n));
+  auto verify = [&](long long n) {
+    vector<long long> f = factorize(n);
     long long prod = 1;
     for (long long p : f) {
-      CHECK(es_primo(p));
+      CHECK(is_prime(p));
       prod *= p;
     }
     CHECK(prod == n && is_sorted(f.begin(), f.end()));
     return f;
   };
   for (int it = 0; it < 300; it++) {
-    long long p = primo_aleatorio(900000000, 2000000000);
-    long long q = primo_aleatorio(900000000, 2000000000);
-    vector<long long> esperado = {min(p, q), max(p, q)};
-    CHECK(verificar(p * q) == esperado);
-    CHECK(verificar(p * p) == (vector<long long>{p, p}));
-    long long a = primo_aleatorio(100000, 1000000);
-    long long b = primo_aleatorio(100000, 1000000);
-    long long c = primo_aleatorio(100000, 1000000);
-    vector<long long> tres = {a, b, c};
-    sort(tres.begin(), tres.end());
-    CHECK(verificar(a * b * c) == tres);
-    verificar(rnd(2, 1000000000000000000LL));
-    long long chico = rnd(2, 1000000000000LL);
-    CHECK(verificar(chico) == factores_brutos(chico));
+    long long p = random_prime(900000000, 2000000000);
+    long long q = random_prime(900000000, 2000000000);
+    vector<long long> expected = {min(p, q), max(p, q)};
+    CHECK(verify(p * q) == expected);
+    CHECK(verify(p * p) == (vector<long long>{p, p}));
+    long long a = random_prime(100000, 1000000);
+    long long b = random_prime(100000, 1000000);
+    long long c = random_prime(100000, 1000000);
+    vector<long long> three = {a, b, c};
+    sort(three.begin(), three.end());
+    CHECK(verify(a * b * c) == three);
+    verify(rnd(2, 1000000000000000000LL));
+    long long small = rnd(2, 1000000000000LL);
+    CHECK(verify(small) == brute_factors(small));
   }
 }
 
-void t_euclides() {
+void t_euclid() {
   for (int it = 0; it < 20000; it++) {
     long long a = rnd(0, 1000000000), b = rnd(0, 1000000000), x, y;
     if (it % 3 == 0) { a = rnd(0, 30); b = rnd(0, 30); }
@@ -115,22 +115,22 @@ void t_euclides() {
   }
   for (long long m = 1; m <= 60; m++)
     for (long long a = -5; a < m + 5; a++) {
-      long long esperado = -1;
+      long long expected = -1;
       for (long long i = 0; i < m; i++)
-        if ((((a % m) + m) % m * i) % m == 1 % m) { esperado = i; break; }
-      CHECK(inv_mod(a, m) == esperado);
+        if ((((a % m) + m) % m * i) % m == 1 % m) { expected = i; break; }
+      CHECK(inv_mod(a, m) == expected);
     }
   for (int it = 0; it < 20000; it++) {
     long long a = rnd(-20, 20), b = rnd(-20, 20), c = rnd(-60, 60);
-    bool existe = false;
-    for (long long x = -70; x <= 70 && !existe; x++) {
-      long long resto = c - a * x;
-      if (b == 0) existe = resto == 0;
-      else existe = resto % b == 0;
+    bool exists = false;
+    for (long long x = -70; x <= 70 && !exists; x++) {
+      long long rem = c - a * x;
+      if (b == 0) exists = rem == 0;
+      else exists = rem % b == 0;
     }
     long long x0, y0, g;
-    bool res = diofantica(a, b, c, x0, y0, g);
-    CHECK(res == existe);
+    bool res = diophantine(a, b, c, x0, y0, g);
+    CHECK(res == exists);
     if (res) {
       CHECK(a * x0 + b * y0 == c);
       if (g != 0) {  // la familia de soluciones tambien cumple
@@ -145,11 +145,11 @@ void t_crt() {
   for (int it = 0; it < 30000; it++) {
     long long m1 = rnd(1, 30), m2 = rnd(1, 30);
     long long a1 = rnd(0, m1 - 1), a2 = rnd(0, m2 - 1);
-    long long l = m1 / __gcd(m1, m2) * m2, esperado = -1;
+    long long l = m1 / __gcd(m1, m2) * m2, expected = -1;
     for (long long x = 0; x < l; x++)
-      if (x % m1 == a1 && x % m2 == a2) { esperado = x; break; }
+      if (x % m1 == a1 && x % m2 == a2) { expected = x; break; }
     auto [x, mod] = crt(a1, m1, a2, m2);
-    CHECK(x == esperado && mod == (esperado == -1 ? -1 : l));
+    CHECK(x == expected && mod == (expected == -1 ? -1 : l));
   }
   for (int it = 0; it < 5000; it++) {
     long long m1 = rnd(1, 1000000000), m2 = rnd(1, 1000000000);
@@ -159,29 +159,29 @@ void t_crt() {
   // plegado de varias congruencias
   for (int it = 0; it < 2000; it++) {
     long long x = rnd(0, 1000000000000LL);
-    pair<long long, long long> acum = {0, 1};
+    pair<long long, long long> acc = {0, 1};
     for (long long m : {1000003LL, 999983LL, 1009LL})
-      acum = crt(acum.first, acum.second, x % m, m);
-    CHECK(acum.first == x % acum.second);
+      acc = crt(acc.first, acc.second, x % m, m);
+    CHECK(acc.first == x % acc.second);
   }
 }
 
 void t_bsgs() {
   for (long long m = 1; m <= 60; m++)
     for (long long a = 0; a < m; a++) {
-      vector<long long> primero(m, -1);
+      vector<long long> first(m, -1);
       long long cur = 1 % m;
       for (long long x = 0; x <= 3 * m; x++) {
-        if (primero[cur] == -1) primero[cur] = x;
+        if (first[cur] == -1) first[cur] = x;
         cur = cur * a % m;
       }
       for (long long b = 0; b < m; b++)
-        CHECK(log_discreto(a, b, m) == primero[b]);
+        CHECK(discrete_log(a, b, m) == first[b]);
     }
   for (int it = 0; it < 200; it++) {
     long long m = it % 2 ? 1000000007 : rnd(2, 10000000000LL);
     long long a = rnd(0, m - 1), x = rnd(0, 1000000), b = powmod(a, x, m);
-    long long r = log_discreto(a, b, m);
+    long long r = discrete_log(a, b, m);
     CHECK(r != -1 && r <= x && powmod(a, r, m) == b);
   }
 }
@@ -192,7 +192,7 @@ void t_gauss() {
     int n = rnd(1, 4), m = rnd(1, 4);
     vector<vector<double>> a(n, vector<double>(m + 1));
     vector<vector<long long>> am(n, vector<long long>(m + 1));
-    bool consistente = rnd(0, 1);
+    bool consistent = rnd(0, 1);
     vector<long long> x0(m);
     for (auto& x : x0) x = rnd(-3, 3);
     for (int i = 0; i < n; i++) {
@@ -204,7 +204,7 @@ void t_gauss() {
         am[i][j] = (v + P) % P;
         b += v * x0[j];
       }
-      if (!consistente) b = rnd(-5, 5);
+      if (!consistent) b = rnd(-5, 5);
       a[i][m] = b;
       am[i][m] = ((b % P) + P) % P;
     }
@@ -213,7 +213,7 @@ void t_gauss() {
     vector<long long> ansm;
     int r = gauss(a, ans), rm = gauss_mod(am, ansm, P);
     CHECK(r == rm);
-    if (consistente) CHECK(r >= 1);
+    if (consistent) CHECK(r >= 1);
     if (r >= 1)
       for (int i = 0; i < n; i++) {
         double s = 0;
@@ -229,12 +229,12 @@ void t_gauss() {
     long long p = vector<long long>{2, 3, 5}[rnd(0, 2)];
     int n = rnd(1, 3), m = rnd(1, 3);
     vector<vector<long long>> a(n, vector<long long>(m + 1));
-    for (auto& fila : a) for (auto& x : fila) x = rnd(0, p - 1);
-    int soluciones = 0, total = 1;
+    for (auto& row : a) for (auto& x : row) x = rnd(0, p - 1);
+    int solutions = 0, total = 1;
     for (int j = 0; j < m; j++) total *= p;
-    for (int cod = 0; cod < total; cod++) {
+    for (int code = 0; code < total; code++) {
       vector<long long> x(m);
-      int c = cod;
+      int c = code;
       for (int j = 0; j < m; j++) { x[j] = c % p; c /= p; }
       bool ok = true;
       for (int i = 0; i < n && ok; i++) {
@@ -242,11 +242,11 @@ void t_gauss() {
         for (int j = 0; j < m; j++) s += a[i][j] * x[j];
         ok = s % p == a[i][m];
       }
-      if (ok) soluciones++;
+      if (ok) solutions++;
     }
     vector<long long> ans;
     int r = gauss_mod(a, ans, p);
-    CHECK(r == min(soluciones, 2));
+    CHECK(r == min(solutions, 2));
     if (r >= 1)
       for (int i = 0; i < n; i++) {
         long long s = 0;
@@ -256,7 +256,7 @@ void t_gauss() {
   }
 }
 
-vector<long long> producto_bruto(const vector<long long>& a,
+vector<long long> brute_product(const vector<long long>& a,
                                  const vector<long long>& b, long long mod) {
   if (a.empty() || b.empty()) return {};
   vector<long long> c(a.size() + b.size() - 1, 0);
@@ -274,44 +274,44 @@ void t_fft() {
     vector<long long> a(n), b(m);
     for (auto& x : a) x = rnd(-1000, 1000);
     for (auto& x : b) x = rnd(-1000, 1000);
-    CHECK(multiplicar(a, b) == producto_bruto(a, b, 0));
+    CHECK(multiply(a, b) == brute_product(a, b, 0));
     for (auto& x : a) x = rnd(0, MOD - 1);
     for (auto& x : b) x = rnd(0, MOD - 1);
-    CHECK(multiplicar_mod(a, b) == producto_bruto(a, b, MOD));
+    CHECK(multiply_mod(a, b) == brute_product(a, b, MOD));
   }
   // limite de precision de la FFT: coeficientes del resultado ~1e14
   vector<long long> a(20000), b(20000);
   for (auto& x : a) x = rnd(0, 100000);
   for (auto& x : b) x = rnd(0, 100000);
-  CHECK(multiplicar(a, b) == producto_bruto(a, b, 0));
+  CHECK(multiply(a, b) == brute_product(a, b, 0));
   for (auto& x : a) x = rnd(0, MOD - 1);
   for (auto& x : b) x = rnd(0, MOD - 1);
-  CHECK(multiplicar_mod(a, b) == producto_bruto(a, b, MOD));
+  CHECK(multiply_mod(a, b) == brute_product(a, b, MOD));
 }
 
-void t_matriz_comb() {
+void t_matrix_comb() {
   const long long P = 1000000007;
   vector<long long> fib = {0, 1};
   for (int i = 2; i <= 300; i++) fib.push_back((fib[i - 1] + fib[i - 2]) % P);
   for (int e = 0; e < 300; e++) {
-    auto r = mat_pot({{1, 1}, {1, 0}}, e, P);
+    auto r = mat_pow({{1, 1}, {1, 0}}, e, P);
     CHECK(r[0][1] == fib[e] && r[0][0] == fib[e + 1]);
   }
   for (int it = 0; it < 300; it++) {
     int k = rnd(1, 4);
     long long mod = rnd(1, 1000);
     vector<vector<long long>> a(k, vector<long long>(k));
-    for (auto& fila : a) for (auto& x : fila) x = rnd(0, mod - 1);
+    for (auto& row : a) for (auto& x : row) x = rnd(0, mod - 1);
     vector<vector<long long>> r(k, vector<long long>(k, 0));
     for (int i = 0; i < k; i++) r[i][i] = 1 % mod;
     for (int e = 0; e < 12; e++) {
-      CHECK(mat_pot(a, e, mod) == r);
+      CHECK(mat_pow(a, e, mod) == r);
       r = mat_mult(r, a, mod);
     }
   }
   for (long long mod : {1000000007LL, 998244353LL, 101LL}) {
     int n = mod == 101 ? 100 : 300;
-    Combinatoria cb(n, mod);
+    Combinatorics cb(n, mod);
     vector<vector<long long>> pascal(n + 1, vector<long long>(n + 1, 0));
     for (int i = 0; i <= n; i++) {
       pascal[i][0] = 1;
@@ -324,14 +324,14 @@ void t_matriz_comb() {
 }
 
 int main() {
-  t_aritmetica();
-  t_primos();
+  t_arithmetic();
+  t_primes();
   t_pollard();
-  t_euclides();
+  t_euclid();
   t_crt();
   t_bsgs();
   t_gauss();
   t_fft();
-  t_matriz_comb();
-  printf("OK matematica\n");
+  t_matrix_comb();
+  printf("OK math\n");
 }

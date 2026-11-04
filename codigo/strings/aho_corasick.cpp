@@ -1,29 +1,29 @@
 // Aho-Corasick (letras 'a'..'z'): busca muchos patrones a la vez.
-// Uso: insertar() cada patron, build(), luego contar(texto).
-// O(suma de largos * 26 + |texto|).
+// Uso: insert() cada patron, build(), luego count_matches(text).
+// O(suma de largos * 26 + |text|).
 struct AhoCorasick {
-  struct Nodo {
+  struct Node {
     array<int, 26> next;
     int link = 0;
-    Nodo() { next.fill(-1); }
+    Node() { next.fill(-1); }
   };
-  vector<Nodo> t;
-  vector<int> orden;        // nodos en orden BFS (sin la raiz)
-  vector<int> nodo_patron;  // nodo donde termina cada patron
+  vector<Node> t;
+  vector<int> order;        // nodos en orden BFS (sin la raiz)
+  vector<int> pattern_node;  // nodo donde termina cada patron
   AhoCorasick() : t(1) {}
-  int insertar(const string& s) {  // retorna el id del patron
+  int insert(const string& s) {  // retorna el id del patron
     int v = 0;
     for (char ch : s) {
       int c = ch - 'a';
       if (t[v].next[c] == -1) {
-        int nuevo = t.size();
+        int new_node = t.size();
         t.emplace_back();
-        t[v].next[c] = nuevo;
+        t[v].next[c] = new_node;
       }
       v = t[v].next[c];
     }
-    nodo_patron.push_back(v);
-    return (int)nodo_patron.size() - 1;
+    pattern_node.push_back(v);
+    return (int)pattern_node.size() - 1;
   }
   void build() {
     queue<int> q;
@@ -35,7 +35,7 @@ struct AhoCorasick {
     while (!q.empty()) {
       int v = q.front();
       q.pop();
-      orden.push_back(v);
+      order.push_back(v);
       for (int c = 0; c < 26; c++) {
         int u = t[v].next[c];
         if (u == -1) {
@@ -48,17 +48,17 @@ struct AhoCorasick {
     }
   }
   // res[i] = cantidad de apariciones del patron i en el texto.
-  vector<long long> contar(const string& texto) {
-    vector<long long> visitas(t.size(), 0);
+  vector<long long> count_matches(const string& text) {
+    vector<long long> visits(t.size(), 0);
     int v = 0;
-    for (char ch : texto) {
+    for (char ch : text) {
       v = t[v].next[ch - 'a'];
-      visitas[v]++;
+      visits[v]++;
     }
-    for (int i = (int)orden.size() - 1; i >= 0; i--)
-      visitas[t[orden[i]].link] += visitas[orden[i]];
+    for (int i = (int)order.size() - 1; i >= 0; i--)
+      visits[t[order[i]].link] += visits[order[i]];
     vector<long long> res;
-    for (int nodo : nodo_patron) res.push_back(visitas[nodo]);
+    for (int node : pattern_node) res.push_back(visits[node]);
     return res;
   }
 };

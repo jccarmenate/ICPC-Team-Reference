@@ -14,11 +14,11 @@ struct Fenwick {
   long long sum(int l, int r) { return sum(r) - sum(l - 1); }
   // Menor i con sum(i) >= k (valores no negativos). n si no hay.
   int lower_bound(long long k) {
-    int pos = 0, pot = 1;
-    while (2 * pot <= n) pot *= 2;
-    for (; pot > 0; pot /= 2)
-      if (pos + pot <= n && bit[pos + pot] < k) {
-        pos += pot;
+    int pos = 0, pw = 1;
+    while (2 * pw <= n) pw *= 2;
+    for (; pw > 0; pw /= 2)
+      if (pos + pw <= n && bit[pos + pw] < k) {
+        pos += pw;
         k -= bit[pos];
       }
     return pos;
