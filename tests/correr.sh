@@ -3,7 +3,7 @@
 # Uso: bash tests/correr.sh
 cd "$(dirname "$0")"
 fallas=0
-for t in busqueda estructuras segtree_recursivo merge_sort_tree grafos euler matematica strings geometria; do
+for t in busqueda estructuras segtree_recursivo merge_sort_tree grafos euler matematica numeros strings geometria; do
   if g++ -std=c++17 -O2 -Wall -Wextra -Wshadow -static \
       -o test_$t.exe test_$t.cpp \
       && ./test_$t.exe; then

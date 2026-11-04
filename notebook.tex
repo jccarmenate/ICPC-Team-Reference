@@ -134,10 +134,13 @@ contra una soluci\'on de fuerza bruta con casos aleatorios
 \codigo{Matching bipartito (Hopcroft-Karp)}{grafos/hopcroft_karp.cpp}
 
 \section{Matem\'atica}
-\codigo{Aritm\'etica modular}{matematica/aritmetica.cpp}
+\codigo{Enteros, potencias, divisiones y ra\'ices}{matematica/enteros.cpp}
+\codigo{Aritm\'etica modular y potencias}{matematica/aritmetica.cpp}
 \codigo{Miller-Rabin}{matematica/miller_rabin.cpp}
 \codigo{Pollard Rho}{matematica/pollard_rho.cpp}
 \codigo{Euclides extendido, inverso, diof\'antica}{matematica/euclides.cpp}
+\codigo{Divisi\'on modular, inversos en lote y congruencias}{matematica/inversos.cpp}
+\codigo{Divisores, phi y exponentes en factoriales}{matematica/divisores.cpp}
 \codigo{Teorema chino del resto}{matematica/crt.cpp}
 \codigo{Baby Step / Giant Step}{matematica/bsgs.cpp}
 \codigo{Criba lineal}{matematica/criba.cpp}
@@ -268,7 +271,7 @@ $\sum_{i=1}^n \frac1i \approx \ln n + 0.577$
   sumas.
 \item Casos borde: $n = 1$, vac\'io, todos iguales, grafo no conexo.
 \item Reiniciar variables globales entre casos de prueba.
-\item M\'odulo de negativos: \texttt{((x \% m) + m) \% m}.
+\item M\'odulo de negativos: \texttt{x \%= m; if (x < 0) x += m;} con $m>0$.
 \item Recursi\'on profunda ($n \ge 10^5$ en cadena): cuidado con la
   pila.
 \item Usar \texttt{'\textbackslash n'} en vez de \texttt{endl}.

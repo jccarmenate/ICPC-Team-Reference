@@ -10,11 +10,15 @@ long long extgcd(long long a, long long b, long long& x,
   return g;
 }
 // Inverso modular de a modulo m (m no necesita ser primo).
-// Retorna -1 si no existe (gcd(a, m) != 1).
+// m >= 1; retorna -1 si no existe (gcd(a, m) != 1).
 long long inv_mod(long long a, long long m) {
   long long x, y;
-  long long g = extgcd(((a % m) + m) % m, m, x, y);
-  return g == 1 ? ((x % m) + m) % m : -1;
+  a %= m;
+  if (a < 0) a += m;
+  long long g = extgcd(a, m, x, y);
+  if (g != 1) return -1;
+  x %= m;
+  return x < 0 ? x + m : x;
 }
 // Ecuacion diofantica a x + b y = c. Retorna false si no hay
 // solucion. Si hay, (x0, y0) es una y todas las demas son
